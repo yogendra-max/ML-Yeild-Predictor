@@ -101,23 +101,29 @@ export default function Index() {
       <header className="bg-white/80 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-crop-green rounded-lg">
-                <Sprout className="h-6 w-6 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+              <div className="p-2 bg-crop-green rounded-lg flex-shrink-0">
+                <Sprout className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Crop Yield Predictor</h1>
-                <p className="text-sm text-muted-foreground">AI-powered crop yield forecasting</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">Crop Yield Predictor</h1>
+                <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">AI-powered crop yield forecasting</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <Button variant="outline" size="sm" onClick={() => navigate('/auth')} className="hidden sm:flex">
                 <User className="h-4 w-4 mr-2" />
                 Sign In
               </Button>
-              <Button size="sm">
+              <Button variant="outline" size="sm" onClick={() => navigate('/auth')} className="sm:hidden">
+                <User className="h-4 w-4" />
+              </Button>
+              <Button size="sm" className="hidden sm:flex">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Dashboard
+              </Button>
+              <Button size="sm" className="sm:hidden">
+                <BarChart3 className="h-4 w-4" />
               </Button>
             </div>
           </div>
