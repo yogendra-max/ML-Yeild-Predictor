@@ -153,11 +153,11 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
-            <div className="text-4xl font-bold text-crop-green">
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-crop-green">
               {prediction.predictedYield} tons/hectare
             </div>
             <p className="text-sm text-muted-foreground mt-1">Expected Yield</p>
-            <div className="flex items-center justify-center gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-4">
               <Badge variant="secondary" className="text-sm">
                 {prediction.confidence}% Confidence
               </Badge>
