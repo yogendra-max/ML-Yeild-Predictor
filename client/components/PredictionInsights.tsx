@@ -172,14 +172,21 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
           {/* Factor Impact Chart */}
           <div>
             <h4 className="font-medium mb-4">Contributing Factors</h4>
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[160px] sm:h-[200px]">
               <BarChart data={prediction.factors}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12 }}
+                  interval={0}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis tick={{ fontSize: 12 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar 
-                  dataKey="impact" 
+                <Bar
+                  dataKey="impact"
                   fill="hsl(var(--crop-green))"
                   radius={[4, 4, 0, 0]}
                 />
