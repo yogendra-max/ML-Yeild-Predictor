@@ -43,6 +43,7 @@ interface PredictionResult {
 }
 
 export default function Index() {
+  const navigate = useNavigate();
   const [weatherData, setWeatherData] = useState<WeatherData>({
     temperature: 0,
     rainfall: 0,
