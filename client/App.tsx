@@ -49,7 +49,8 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={
+      <Route path="/" element={<Landing />} />
+      <Route path="/predict" element={
         <ProtectedRoute>
           <Index />
         </ProtectedRoute>
