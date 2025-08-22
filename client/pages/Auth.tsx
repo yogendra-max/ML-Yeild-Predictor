@@ -248,12 +248,12 @@ export default function Auth() {
                     )}
                   </div>
                   
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={!isSignUpValid || isLoading}
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={!isSignUpValid || authLoading}
                   >
-                    {isLoading ? (
+                    {authLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Creating account...
