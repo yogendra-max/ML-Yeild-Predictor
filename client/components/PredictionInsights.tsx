@@ -205,19 +205,19 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px]">
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[300px]">
             <LineChart data={dataWithPrediction}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Line 
-                type="monotone" 
-                dataKey="yield" 
-                stroke="hsl(var(--crop-green))" 
+              <Line
+                type="monotone"
+                dataKey="yield"
+                stroke="hsl(var(--crop-green))"
                 strokeWidth={2}
-                dot={{ fill: "hsl(var(--crop-green))", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "hsl(var(--crop-green))", strokeWidth: 2 }}
+                dot={{ fill: "hsl(var(--crop-green))", strokeWidth: 2, r: 3 }}
+                activeDot={{ r: 5, stroke: "hsl(var(--crop-green))", strokeWidth: 2 }}
               />
             </LineChart>
           </ChartContainer>
