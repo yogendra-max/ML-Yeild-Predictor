@@ -2,34 +2,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { 
-  ChartContainer, 
-  ChartTooltip, 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  ChartContainer,
+  ChartTooltip,
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart";
-import { 
-  BarChart, 
-  Bar, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  PieChart, 
-  Pie, 
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  PieChart,
+  Pie,
   Cell,
-  ResponsiveContainer
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter
 } from "recharts";
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Download, 
-  Share2, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Download,
+  Share2,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
+  HelpCircle
 } from "lucide-react";
 
 interface PredictionResult {
@@ -51,7 +55,46 @@ interface PredictionInsightsProps {
   cropType: string;
 }
 
+interface PesticideData {
+  type: string;
+  amount: number;
+  applicationDate: string;
+  frequency: string;
+}
+
 export function PredictionInsights({ prediction, weatherData, cropType }: PredictionInsightsProps) {
+  // Generate correlation data for different factors vs yield
+  const temperatureYieldData = [
+    { temperature: 15, yield: 28.5 }, { temperature: 18, yield: 30.2 }, { temperature: 20, yield: 32.1 },
+    { temperature: 22, yield: 34.8 }, { temperature: 25, yield: 39.2 }, { temperature: 28, yield: 42.1 },
+    { temperature: 30, yield: 41.8 }, { temperature: 32, yield: 40.5 }, { temperature: 35, yield: 37.2 },
+    { temperature: 38, yield: 33.1 }, { temperature: 40, yield: 28.9 },
+    { temperature: weatherData.temperature, yield: prediction.predictedYield, current: true }
+  ];
+
+  const pesticideYieldData = [
+    { pesticide: 0, yield: 25.2 }, { pesticide: 1, yield: 28.5 }, { pesticide: 2, yield: 32.1 },
+    { pesticide: 3, yield: 36.8 }, { pesticide: 4, yield: 39.2 }, { pesticide: 5, yield: 41.1 },
+    { pesticide: 6, yield: 40.8 }, { pesticide: 7, yield: 39.5 }, { pesticide: 8, yield: 37.2 },
+    { pesticide: 9, yield: 34.1 }, { pesticide: 10, yield: 30.9 },
+    { pesticide: 2.5, yield: prediction.predictedYield, current: true } // Example current usage
+  ];
+
+  const rainfallYieldData = [
+    { rainfall: 20, yield: 22.5 }, { rainfall: 40, yield: 26.2 }, { rainfall: 60, yield: 30.1 },
+    { rainfall: 80, yield: 34.8 }, { rainfall: 100, yield: 38.2 }, { rainfall: 120, yield: 41.1 },
+    { rainfall: 140, yield: 42.8 }, { rainfall: 160, yield: 43.5 }, { rainfall: 180, yield: 42.2 },
+    { rainfall: 200, yield: 40.1 }, { rainfall: 220, yield: 37.9 },
+    { rainfall: weatherData.rainfall, yield: prediction.predictedYield, current: true }
+  ];
+
+  const humidityYieldData = [
+    { humidity: 30, yield: 25.2 }, { humidity: 40, yield: 28.5 }, { humidity: 50, yield: 32.1 },
+    { humidity: 60, yield: 36.8 }, { humidity: 70, yield: 41.2 }, { humidity: 80, yield: 43.1 },
+    { humidity: 85, yield: 42.8 }, { humidity: 90, yield: 41.5 }, { humidity: 95, yield: 39.2 },
+    { humidity: weatherData.humidity, yield: prediction.predictedYield, current: true }
+  ];
+
   // Generate historical data for trend visualization (mock data)
   const historicalData = [
     { month: "Jan", yield: 28.5, avgTemp: 15, rainfall: 120 },
@@ -158,9 +201,22 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
             </div>
             <p className="text-sm text-muted-foreground mt-1">Expected Yield</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-4">
-              <Badge variant="secondary" className="text-sm">
-                {prediction.confidence}% Confidence
-              </Badge>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="secondary" className="text-sm flex items-center gap-1 cursor-help">
+                      {prediction.confidence}% Confidence
+                      <HelpCircle className="h-3 w-3" />
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-xs">
+                    <p className="text-xs">
+                      Higher confidence scores indicate more reliable predictions.
+                      Scores above 85% are considered highly accurate based on current data quality.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Badge variant="outline" className={`text-sm ${yieldStatus.color}`}>
                 {yieldStatus.status.charAt(0).toUpperCase() + yieldStatus.status.slice(1).replace('-', ' ')}
               </Badge>
@@ -196,33 +252,184 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
         </CardContent>
       </Card>
 
-      {/* Historical Yield Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Yield Trends</CardTitle>
-          <CardDescription>
-            Historical yield data with current prediction
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[300px]">
-            <LineChart data={dataWithPrediction}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Line
-                type="monotone"
-                dataKey="yield"
-                stroke="hsl(var(--crop-green))"
-                strokeWidth={2}
-                dot={{ fill: "hsl(var(--crop-green))", strokeWidth: 2, r: 3 }}
-                activeDot={{ r: 5, stroke: "hsl(var(--crop-green))", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* Correlation Analysis - Grid Layout */}
+      <div className="space-y-4">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold text-foreground">Factor Correlation Analysis</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            How different farming factors correlate with crop yield predictions
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {/* Temperature vs Yield */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Temperature vs Yield</CardTitle>
+              <CardDescription className="text-xs">
+                Correlation between temperature (°C) and crop yield
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <ScatterChart data={temperatureYieldData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="temperature"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Temperature (°C)', position: 'insideBottom', offset: -5, style: { fontSize: '10px' } }}
+                  />
+                  <YAxis
+                    dataKey="yield"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Scatter
+                    dataKey="yield"
+                    fill="hsl(var(--wheat-gold))"
+                    r={4}
+                  />
+                </ScatterChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Pesticide vs Yield */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Pesticide vs Yield</CardTitle>
+              <CardDescription className="text-xs">
+                Impact of pesticide usage (kg/ha) on crop yield
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <ScatterChart data={pesticideYieldData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="pesticide"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Pesticide (kg/ha)', position: 'insideBottom', offset: -5, style: { fontSize: '10px' } }}
+                  />
+                  <YAxis
+                    dataKey="yield"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Scatter
+                    dataKey="yield"
+                    fill="hsl(var(--soil-brown))"
+                    r={4}
+                  />
+                </ScatterChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Rainfall vs Yield */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Rainfall vs Yield</CardTitle>
+              <CardDescription className="text-xs">
+                Relationship between rainfall (mm) and crop yield
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <ScatterChart data={rainfallYieldData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="rainfall"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Rainfall (mm)', position: 'insideBottom', offset: -5, style: { fontSize: '10px' } }}
+                  />
+                  <YAxis
+                    dataKey="yield"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Scatter
+                    dataKey="yield"
+                    fill="hsl(var(--water-blue))"
+                    r={4}
+                  />
+                </ScatterChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Humidity vs Yield */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Humidity vs Yield</CardTitle>
+              <CardDescription className="text-xs">
+                Effect of humidity (%) on crop yield performance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <ScatterChart data={humidityYieldData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="humidity"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Humidity (%)', position: 'insideBottom', offset: -5, style: { fontSize: '10px' } }}
+                  />
+                  <YAxis
+                    dataKey="yield"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Scatter
+                    dataKey="yield"
+                    fill="hsl(var(--crop-green))"
+                    r={4}
+                  />
+                </ScatterChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Historical Yield Trends */}
+          <Card className="md:col-span-2 xl:col-span-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Historical Yield Trends</CardTitle>
+              <CardDescription className="text-xs">
+                Monthly yield performance over the past year
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <LineChart data={dataWithPrediction}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Month', position: 'insideBottom', offset: -5, style: { fontSize: '10px' } }}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line
+                    type="monotone"
+                    dataKey="yield"
+                    stroke="hsl(var(--crop-green))"
+                    strokeWidth={2}
+                    dot={{ fill: "hsl(var(--crop-green))", strokeWidth: 2, r: 3 }}
+                    activeDot={{ r: 5, stroke: "hsl(var(--crop-green))", strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {/* Weather Analysis */}
       <Card>
@@ -273,7 +480,25 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
       {/* Recommendations */}
       <Card>
         <CardHeader>
-          <CardTitle>AI Recommendations</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            AI Recommendations
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1 cursor-help">
+                    Confidence: {prediction.confidence}%
+                    <HelpCircle className="h-3 w-3" />
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">
+                    Recommendation reliability based on prediction confidence.
+                    Higher confidence means more accurate insights.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </CardTitle>
           <CardDescription>
             Actionable insights to optimize your yield
           </CardDescription>
@@ -291,7 +516,7 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
                 </div>
               </div>
             )}
-            
+
             {weatherData.rainfall < 50 && (
               <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <Info className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -303,7 +528,7 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
                 </div>
               </div>
             )}
-            
+
             {prediction.confidence > 85 && (
               <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
