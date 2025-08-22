@@ -1,62 +1,455 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Droplets, 
+  Thermometer, 
+  CloudRain, 
+  Sprout, 
+  TrendingUp, 
+  BarChart3, 
+  Calendar,
+  MapPin,
+  User,
+  Shield
+} from "lucide-react";
+
+interface WeatherData {
+  temperature: number;
+  rainfall: number;
+  humidity: number;
+  season: string;
+}
+
+interface PesticideData {
+  type: string;
+  amount: number;
+  applicationDate: string;
+  frequency: string;
+}
+
+interface PredictionResult {
+  predictedYield: number;
+  confidence: number;
+  factors: Array<{ name: string; impact: number }>;
+}
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
+  const [weatherData, setWeatherData] = useState<WeatherData>({
+    temperature: 0,
+    rainfall: 0,
+    humidity: 0,
+    season: ""
+  });
 
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
+  const [pesticideData, setPesticideData] = useState<PesticideData>({
+    type: "",
+    amount: 0,
+    applicationDate: "",
+    frequency: ""
+  });
+
+  const [cropType, setCropType] = useState("");
+  const [farmLocation, setFarmLocation] = useState("");
+  const [soilType, setSoilType] = useState("");
+  const [prediction, setPrediction] = useState<PredictionResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePredict = async () => {
+    setIsLoading(true);
+    
+    // Simulate AI prediction with realistic data
+    setTimeout(() => {
+      const mockPrediction: PredictionResult = {
+        predictedYield: Math.round((Math.random() * 50 + 30) * 100) / 100,
+        confidence: Math.round((Math.random() * 20 + 75) * 100) / 100,
+        factors: [
+          { name: "Temperature", impact: Math.round((weatherData.temperature / 40) * 100) },
+          { name: "Rainfall", impact: Math.round((weatherData.rainfall / 200) * 100) },
+          { name: "Humidity", impact: Math.round((weatherData.humidity / 100) * 100) },
+          { name: "Pesticide Usage", impact: Math.round((pesticideData.amount / 10) * 100) },
+          { name: "Seasonal Factors", impact: Math.round(Math.random() * 100) }
+        ]
+      };
+      setPrediction(mockPrediction);
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  const isFormValid = () => {
+    return weatherData.temperature > 0 && 
+           weatherData.rainfall >= 0 && 
+           weatherData.humidity > 0 &&
+           weatherData.season &&
+           cropType &&
+           farmLocation &&
+           soilType;
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent/20">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-border shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-crop-green rounded-lg">
+                <Sprout className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Crop Yield Predictor</h1>
+                <p className="text-sm text-muted-foreground">AI-powered crop yield forecasting</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+              <Button size="sm">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Input Forms Section */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Farm Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Farm Information
+                </CardTitle>
+                <CardDescription>
+                  Basic information about your farm and crop
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="crop-type">Crop Type</Label>
+                    <Select value={cropType} onValueChange={setCropType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select crop type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="wheat">Wheat</SelectItem>
+                        <SelectItem value="corn">Corn</SelectItem>
+                        <SelectItem value="rice">Rice</SelectItem>
+                        <SelectItem value="soybean">Soybean</SelectItem>
+                        <SelectItem value="cotton">Cotton</SelectItem>
+                        <SelectItem value="potato">Potato</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Farm Location</Label>
+                    <Input
+                      id="location"
+                      placeholder="City, State/Country"
+                      value={farmLocation}
+                      onChange={(e) => setFarmLocation(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="soil-type">Soil Type</Label>
+                    <Select value={soilType} onValueChange={setSoilType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select soil type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="clay">Clay</SelectItem>
+                        <SelectItem value="sandy">Sandy</SelectItem>
+                        <SelectItem value="loam">Loam</SelectItem>
+                        <SelectItem value="silt">Silt</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="season">Growing Season</Label>
+                    <Select value={weatherData.season} onValueChange={(value) => setWeatherData(prev => ({ ...prev, season: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select season" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="spring">Spring</SelectItem>
+                        <SelectItem value="summer">Summer</SelectItem>
+                        <SelectItem value="fall">Fall</SelectItem>
+                        <SelectItem value="winter">Winter</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Weather Data Input */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CloudRain className="h-5 w-5" />
+                  Weather Conditions
+                </CardTitle>
+                <CardDescription>
+                  Enter current and expected weather data for accurate predictions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="temperature" className="flex items-center gap-2">
+                      <Thermometer className="h-4 w-4" />
+                      Temperature (°C)
+                    </Label>
+                    <Input
+                      id="temperature"
+                      type="number"
+                      placeholder="25"
+                      value={weatherData.temperature || ""}
+                      onChange={(e) => setWeatherData(prev => ({ 
+                        ...prev, 
+                        temperature: parseFloat(e.target.value) || 0 
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rainfall" className="flex items-center gap-2">
+                      <CloudRain className="h-4 w-4" />
+                      Rainfall (mm)
+                    </Label>
+                    <Input
+                      id="rainfall"
+                      type="number"
+                      placeholder="150"
+                      value={weatherData.rainfall || ""}
+                      onChange={(e) => setWeatherData(prev => ({ 
+                        ...prev, 
+                        rainfall: parseFloat(e.target.value) || 0 
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="humidity" className="flex items-center gap-2">
+                      <Droplets className="h-4 w-4" />
+                      Humidity (%)
+                    </Label>
+                    <Input
+                      id="humidity"
+                      type="number"
+                      placeholder="65"
+                      value={weatherData.humidity || ""}
+                      onChange={(e) => setWeatherData(prev => ({ 
+                        ...prev, 
+                        humidity: parseFloat(e.target.value) || 0 
+                      }))}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Pesticide Usage */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Pesticide Usage
+                </CardTitle>
+                <CardDescription>
+                  Information about pest control measures
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="pesticide-type">Pesticide Type</Label>
+                    <Select value={pesticideData.type} onValueChange={(value) => setPesticideData(prev => ({ ...prev, type: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select pesticide type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="organic">Organic</SelectItem>
+                        <SelectItem value="synthetic">Synthetic</SelectItem>
+                        <SelectItem value="biological">Biological</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pesticide-amount">Amount (kg/hectare)</Label>
+                    <Input
+                      id="pesticide-amount"
+                      type="number"
+                      placeholder="2.5"
+                      value={pesticideData.amount || ""}
+                      onChange={(e) => setPesticideData(prev => ({ 
+                        ...prev, 
+                        amount: parseFloat(e.target.value) || 0 
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="application-date">Application Date</Label>
+                    <Input
+                      id="application-date"
+                      type="date"
+                      value={pesticideData.applicationDate}
+                      onChange={(e) => setPesticideData(prev => ({ 
+                        ...prev, 
+                        applicationDate: e.target.value 
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="frequency">Application Frequency</Label>
+                    <Select value={pesticideData.frequency} onValueChange={(value) => setPesticideData(prev => ({ ...prev, frequency: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="bi-weekly">Bi-weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="as-needed">As needed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button 
+              onClick={handlePredict} 
+              disabled={!isFormValid() || isLoading}
+              className="w-full h-12 text-lg"
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Analyzing Data...
+                </>
+              ) : (
+                <>
+                  <TrendingUp className="h-5 w-5 mr-2" />
+                  Predict Crop Yield
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Prediction Results Section */}
+          <div className="space-y-6">
+            
+            {/* Prediction Result */}
+            {prediction ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Prediction Results
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-crop-green">
+                      {prediction.predictedYield} tons/hectare
+                    </div>
+                    <p className="text-sm text-muted-foreground">Predicted Yield</p>
+                    <Badge variant="secondary" className="mt-2">
+                      {prediction.confidence}% Confidence
+                    </Badge>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Contributing Factors</h4>
+                    <div className="space-y-2">
+                      {prediction.factors.map((factor, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span className="text-sm">{factor.name}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-crop-green rounded-full transition-all"
+                                style={{ width: `${Math.min(factor.impact, 100)}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-8">
+                              {factor.impact}%
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Get Your Prediction</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground text-center py-8">
+                    Fill in the form to get AI-powered crop yield predictions based on weather data and farming practices.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick Tips */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Tips</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="p-1 bg-crop-green/10 rounded">
+                    <Droplets className="h-4 w-4 text-crop-green" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Optimal Moisture</p>
+                    <p className="text-xs text-muted-foreground">Maintain 60-80% humidity for best results</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-1 bg-wheat-gold/10 rounded">
+                    <Thermometer className="h-4 w-4 text-wheat-gold" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Temperature Range</p>
+                    <p className="text-xs text-muted-foreground">20-30°C is ideal for most crops</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-1 bg-soil-brown/10 rounded">
+                    <Shield className="h-4 w-4 text-soil-brown" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Pesticide Balance</p>
+                    <p className="text-xs text-muted-foreground">Use minimal amounts for sustainable farming</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
