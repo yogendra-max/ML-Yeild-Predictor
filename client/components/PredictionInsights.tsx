@@ -125,19 +125,25 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
       {/* Main Prediction Result */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <span className="flex items-center gap-2">
               <StatusIcon className={`h-5 w-5 ${yieldStatus.color}`} />
               Yield Prediction
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="hidden sm:flex">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="sm:hidden flex-1">
+                <Share2 className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="hidden sm:flex">
                 <Download className="h-4 w-4 mr-2" />
                 Export
+              </Button>
+              <Button variant="outline" size="sm" className="sm:hidden flex-1">
+                <Download className="h-4 w-4" />
               </Button>
             </div>
           </CardTitle>
