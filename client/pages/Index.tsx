@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PredictionInsights } from "@/components/PredictionInsights";
+import { BackButton } from "@/components/BackButton";
+import { useAuth } from "@/contexts/AuthContext";
+import { usePredictions, WeatherData, PesticideData } from "@/contexts/PredictionContext";
 import {
   Droplets,
   Thermometer,
@@ -19,22 +22,9 @@ import {
   Calendar,
   MapPin,
   User,
-  Shield
+  Shield,
+  LogOut
 } from "lucide-react";
-
-interface WeatherData {
-  temperature: number;
-  rainfall: number;
-  humidity: number;
-  season: string;
-}
-
-interface PesticideData {
-  type: string;
-  amount: number;
-  applicationDate: string;
-  frequency: string;
-}
 
 interface PredictionResult {
   predictedYield: number;
@@ -44,6 +34,9 @@ interface PredictionResult {
 
 export default function Index() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { addPrediction } = usePredictions();
+
   const [weatherData, setWeatherData] = useState<WeatherData>({
     temperature: 0,
     rainfall: 0,
@@ -64,9 +57,14 @@ export default function Index() {
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleSignOut = () => {
+    signOut();
+    navigate("/auth");
+  };
+
   const handlePredict = async () => {
     setIsLoading(true);
-    
+
     // Simulate AI prediction with realistic data
     setTimeout(() => {
       const mockPrediction: PredictionResult = {
@@ -80,6 +78,17 @@ export default function Index() {
           { name: "Seasonal Factors", impact: Math.round(Math.random() * 100) }
         ]
       };
+
+      // Save prediction to context
+      addPrediction(
+        cropType,
+        farmLocation,
+        soilType,
+        weatherData,
+        pesticideData,
+        mockPrediction
+      );
+
       setPrediction(mockPrediction);
       setIsLoading(false);
     }, 2000);
@@ -107,23 +116,26 @@ export default function Index() {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">Crop Yield Predictor</h1>
-                <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">AI-powered crop yield forecasting</p>
+                <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
+                  Welcome {user?.name} - AI-powered crop yield forecasting
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')} className="hidden sm:flex">
-                <User className="h-4 w-4 mr-2" />
-                Sign In
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')} className="sm:hidden">
-                <User className="h-4 w-4" />
-              </Button>
-              <Button size="sm" className="hidden sm:flex">
+              <BackButton to="/dashboard" />
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="hidden sm:flex">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Dashboard
               </Button>
-              <Button size="sm" className="sm:hidden">
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="sm:hidden">
                 <BarChart3 className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="hidden sm:flex">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="sm:hidden">
+                <LogOut className="h-4 w-4" />
               </Button>
             </div>
           </div>
