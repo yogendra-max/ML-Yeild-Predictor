@@ -75,8 +75,13 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        
+      <div className="w-full max-w-md relative">
+
+        {/* Back Button */}
+        <div className="absolute -top-4 -left-4 md:-top-8 md:-left-8">
+          <BackButton to="/" />
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
