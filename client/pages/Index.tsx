@@ -357,49 +357,11 @@ export default function Index() {
             
             {/* Prediction Result */}
             {prediction ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Prediction Results
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-crop-green">
-                      {prediction.predictedYield} tons/hectare
-                    </div>
-                    <p className="text-sm text-muted-foreground">Predicted Yield</p>
-                    <Badge variant="secondary" className="mt-2">
-                      {prediction.confidence}% Confidence
-                    </Badge>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div>
-                    <h4 className="font-medium mb-3">Contributing Factors</h4>
-                    <div className="space-y-2">
-                      {prediction.factors.map((factor, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span className="text-sm">{factor.name}</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-crop-green rounded-full transition-all"
-                                style={{ width: `${Math.min(factor.impact, 100)}%` }}
-                              />
-                            </div>
-                            <span className="text-xs text-muted-foreground w-8">
-                              {factor.impact}%
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <PredictionInsights
+                prediction={prediction}
+                weatherData={weatherData}
+                cropType={cropType}
+              />
             ) : (
               <Card>
                 <CardHeader>
