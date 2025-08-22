@@ -64,6 +64,7 @@ interface PesticideData {
 }
 
 export function PredictionInsights({ prediction, weatherData, cropType }: PredictionInsightsProps) {
+  const { exportToCSV, exportToPDF } = usePredictions();
   // Generate correlation data for different factors vs yield
   const temperatureYieldData = [
     { temperature: 15, yield: 28.5 }, { temperature: 18, yield: 30.2 }, { temperature: 20, yield: 32.1 },
