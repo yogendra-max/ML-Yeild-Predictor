@@ -25,9 +25,11 @@ interface AuthFormData {
 }
 
 export default function Auth() {
+  const navigate = useNavigate();
+  const { signIn, signUp, isLoading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
@@ -37,15 +39,29 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log(`${activeTab} attempt:`, formData);
-      setIsLoading(false);
-      // In a real app, this would redirect to dashboard
-      alert(`${activeTab === 'signin' ? 'Sign in' : 'Sign up'} successful! (Demo)`);
-    }, 2000);
+    setError("");
+
+    try {
+      let success = false;
+
+      if (activeTab === "signin") {
+        success = await signIn(formData.email, formData.password);
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          return;
+        }
+        success = await signUp(formData.name || "", formData.email, formData.password);
+      }
+
+      if (success) {
+        navigate("/dashboard");
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    }
   };
 
   const updateFormData = (field: keyof AuthFormData, value: string) => {
