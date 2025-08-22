@@ -273,7 +273,7 @@ export default function Auth() {
             <div className="mt-6">
               <Separator />
               <div className="mt-6">
-                <Button variant="outline" className="w-full" disabled={isLoading}>
+                <Button variant="outline" className="w-full" disabled={authLoading}>
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
