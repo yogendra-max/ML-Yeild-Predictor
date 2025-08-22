@@ -57,7 +57,7 @@ export default function Dashboard() {
   };
 
   const handleNewPrediction = () => {
-    navigate("/");
+    navigate("/predict");
   };
 
   const filterPredictionsByTimeframe = () => {
