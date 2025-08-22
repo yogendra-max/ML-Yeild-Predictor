@@ -1,0 +1,310 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
+} from "@/components/ui/chart";
+import { 
+  BarChart, 
+  Bar, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  PieChart, 
+  Pie, 
+  Cell,
+  ResponsiveContainer
+} from "recharts";
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  Download, 
+  Share2, 
+  AlertTriangle,
+  CheckCircle,
+  Info
+} from "lucide-react";
+
+interface PredictionResult {
+  predictedYield: number;
+  confidence: number;
+  factors: Array<{ name: string; impact: number }>;
+}
+
+interface WeatherData {
+  temperature: number;
+  rainfall: number;
+  humidity: number;
+  season: string;
+}
+
+interface PredictionInsightsProps {
+  prediction: PredictionResult;
+  weatherData: WeatherData;
+  cropType: string;
+}
+
+export function PredictionInsights({ prediction, weatherData, cropType }: PredictionInsightsProps) {
+  // Generate historical data for trend visualization (mock data)
+  const historicalData = [
+    { month: "Jan", yield: 28.5, avgTemp: 15, rainfall: 120 },
+    { month: "Feb", yield: 30.2, avgTemp: 18, rainfall: 100 },
+    { month: "Mar", yield: 32.1, avgTemp: 22, rainfall: 80 },
+    { month: "Apr", yield: 35.4, avgTemp: 25, rainfall: 60 },
+    { month: "May", yield: 38.2, avgTemp: 28, rainfall: 40 },
+    { month: "Jun", yield: 41.5, avgTemp: 32, rainfall: 30 },
+    { month: "Jul", yield: 39.8, avgTemp: 35, rainfall: 45 },
+    { month: "Aug", yield: 37.2, avgTemp: 33, rainfall: 65 },
+    { month: "Sep", yield: 34.6, avgTemp: 30, rainfall: 85 },
+    { month: "Oct", yield: 31.8, avgTemp: 26, rainfall: 110 },
+    { month: "Nov", yield: 29.4, avgTemp: 21, rainfall: 140 },
+    { month: "Dec", yield: 27.9, avgTemp: 17, rainfall: 160 }
+  ];
+
+  // Add current prediction to the data
+  const currentMonth = new Date().toLocaleDateString('en', { month: 'short' });
+  const dataWithPrediction = historicalData.map(item => 
+    item.month === currentMonth 
+      ? { ...item, yield: prediction.predictedYield, predicted: true }
+      : item
+  );
+
+  // Weather factor distribution data
+  const weatherFactors = [
+    { name: "Temperature", value: weatherData.temperature, optimal: 25, color: "#FF6B6B" },
+    { name: "Rainfall", value: weatherData.rainfall, optimal: 150, color: "#4ECDC4" },
+    { name: "Humidity", value: weatherData.humidity, optimal: 70, color: "#45B7D1" }
+  ];
+
+  // Factor impact chart configuration
+  const chartConfig = {
+    impact: {
+      label: "Impact (%)",
+    },
+    temperature: {
+      label: "Temperature",
+      color: "hsl(var(--wheat-gold))",
+    },
+    rainfall: {
+      label: "Rainfall", 
+      color: "hsl(var(--water-blue))",
+    },
+    humidity: {
+      label: "Humidity",
+      color: "hsl(var(--crop-green))",
+    },
+    pesticide: {
+      label: "Pesticide",
+      color: "hsl(var(--soil-brown))",
+    },
+    seasonal: {
+      label: "Seasonal",
+      color: "hsl(var(--sun-yellow))",
+    }
+  };
+
+  const getYieldStatus = () => {
+    if (prediction.predictedYield >= 40) return { status: "excellent", icon: CheckCircle, color: "text-green-600" };
+    if (prediction.predictedYield >= 30) return { status: "good", icon: TrendingUp, color: "text-blue-600" };
+    if (prediction.predictedYield >= 20) return { status: "average", icon: Info, color: "text-yellow-600" };
+    return { status: "below-average", icon: AlertTriangle, color: "text-red-600" };
+  };
+
+  const yieldStatus = getYieldStatus();
+  const StatusIcon = yieldStatus.icon;
+
+  return (
+    <div className="space-y-6">
+      {/* Main Prediction Result */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <StatusIcon className={`h-5 w-5 ${yieldStatus.color}`} />
+              Yield Prediction
+            </span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+            </div>
+          </CardTitle>
+          <CardDescription>
+            AI prediction for {cropType} yield based on current conditions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-crop-green">
+              {prediction.predictedYield} tons/hectare
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">Expected Yield</p>
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <Badge variant="secondary" className="text-sm">
+                {prediction.confidence}% Confidence
+              </Badge>
+              <Badge variant="outline" className={`text-sm ${yieldStatus.color}`}>
+                {yieldStatus.status.charAt(0).toUpperCase() + yieldStatus.status.slice(1).replace('-', ' ')}
+              </Badge>
+            </div>
+          </div>
+          
+          <Separator />
+          
+          {/* Factor Impact Chart */}
+          <div>
+            <h4 className="font-medium mb-4">Contributing Factors</h4>
+            <ChartContainer config={chartConfig} className="h-[200px]">
+              <BarChart data={prediction.factors}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar 
+                  dataKey="impact" 
+                  fill="hsl(var(--crop-green))"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Historical Yield Trends */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Yield Trends</CardTitle>
+          <CardDescription>
+            Historical yield data with current prediction
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig} className="h-[300px]">
+            <LineChart data={dataWithPrediction}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Line 
+                type="monotone" 
+                dataKey="yield" 
+                stroke="hsl(var(--crop-green))" 
+                strokeWidth={2}
+                dot={{ fill: "hsl(var(--crop-green))", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: "hsl(var(--crop-green))", strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+
+      {/* Weather Analysis */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Weather Analysis</CardTitle>
+          <CardDescription>
+            Current conditions vs optimal ranges
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {weatherFactors.map((factor) => {
+            const percentage = (factor.value / factor.optimal) * 100;
+            const isOptimal = percentage >= 80 && percentage <= 120;
+            
+            return (
+              <div key={factor.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{factor.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{factor.value}</span>
+                    <Badge 
+                      variant={isOptimal ? "default" : "destructive"} 
+                      className="text-xs"
+                    >
+                      {isOptimal ? "Optimal" : percentage > 120 ? "High" : "Low"}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all ${
+                      isOptimal ? "bg-crop-green" : "bg-destructive"
+                    }`}
+                    style={{ width: `${Math.min(percentage, 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>0</span>
+                  <span>Optimal: {factor.optimal}</span>
+                  <span>{factor.optimal * 1.5}</span>
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Recommendations */}
+      <Card>
+        <CardHeader>
+          <CardTitle>AI Recommendations</CardTitle>
+          <CardDescription>
+            Actionable insights to optimize your yield
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            {weatherData.temperature > 35 && (
+              <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-800">High Temperature Alert</p>
+                  <p className="text-xs text-yellow-700">
+                    Consider providing shade or increasing irrigation to protect crops from heat stress.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {weatherData.rainfall < 50 && (
+              <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800">Low Rainfall Notice</p>
+                  <p className="text-xs text-blue-700">
+                    Supplement with irrigation to maintain optimal soil moisture levels.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {prediction.confidence > 85 && (
+              <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-green-800">Highly Accurate Prediction</p>
+                  <p className="text-xs text-green-700">
+                    Current conditions provide reliable prediction data. Plan accordingly.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
