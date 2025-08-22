@@ -176,19 +176,19 @@ export function PredictionInsights({ prediction, weatherData, cropType }: Predic
               Yield Prediction
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="hidden sm:flex">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-              <Button variant="outline" size="sm" className="sm:hidden flex-1">
-                <Share2 className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => exportToCSV()}>
                 <Download className="h-4 w-4 mr-2" />
-                Export
+                Export CSV
               </Button>
-              <Button variant="outline" size="sm" className="sm:hidden flex-1">
-                <Download className="h-4 w-4" />
+              <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => exportToPDF()}>
+                <Download className="h-4 w-4 mr-2" />
+                Export PDF
+              </Button>
+              <Button variant="outline" size="sm" className="sm:hidden flex-1" onClick={() => exportToCSV()}>
+                CSV
+              </Button>
+              <Button variant="outline" size="sm" className="sm:hidden flex-1" onClick={() => exportToPDF()}>
+                PDF
               </Button>
             </div>
           </CardTitle>
