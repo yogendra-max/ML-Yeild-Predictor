@@ -353,8 +353,8 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Button 
-              onClick={handlePredict} 
+            <Button
+              onClick={handlePredict}
               disabled={!isFormValid() || isLoading}
               className="w-full h-12 text-lg"
             >
@@ -370,20 +370,18 @@ export default function Index() {
                 </>
               )}
             </Button>
-          </div>
 
-          {/* Prediction Results Section */}
-          <div className="space-y-6">
-            
-            {/* Prediction Result */}
+            {/* Prediction Results - Now below the button */}
             {prediction ? (
-              <PredictionInsights
-                prediction={prediction}
-                weatherData={weatherData}
-                cropType={cropType}
-              />
+              <div className="mt-8">
+                <PredictionInsights
+                  prediction={prediction}
+                  weatherData={weatherData}
+                  cropType={cropType}
+                />
+              </div>
             ) : (
-              <Card>
+              <Card className="mt-6">
                 <CardHeader>
                   <CardTitle>Get Your Prediction</CardTitle>
                 </CardHeader>
@@ -394,43 +392,43 @@ export default function Index() {
                 </CardContent>
               </Card>
             )}
-
-            {/* Quick Tips */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Tips</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-crop-green/10 rounded">
-                    <Droplets className="h-4 w-4 text-crop-green" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Optimal Moisture</p>
-                    <p className="text-xs text-muted-foreground">Maintain 60-80% humidity for best results</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-wheat-gold/10 rounded">
-                    <Thermometer className="h-4 w-4 text-wheat-gold" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Temperature Range</p>
-                    <p className="text-xs text-muted-foreground">20-30°C is ideal for most crops</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-soil-brown/10 rounded">
-                    <Shield className="h-4 w-4 text-soil-brown" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Pesticide Balance</p>
-                    <p className="text-xs text-muted-foreground">Use minimal amounts for sustainable farming</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
+
+          {/* Quick Tips - Now as a separate section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Tips</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="p-1 bg-crop-green/10 rounded">
+                  <Droplets className="h-4 w-4 text-crop-green" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Optimal Moisture</p>
+                  <p className="text-xs text-muted-foreground">Maintain 60-80% humidity for best results</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="p-1 bg-wheat-gold/10 rounded">
+                  <Thermometer className="h-4 w-4 text-wheat-gold" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Temperature Range</p>
+                  <p className="text-xs text-muted-foreground">20-30°C is ideal for most crops</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="p-1 bg-soil-brown/10 rounded">
+                  <Shield className="h-4 w-4 text-soil-brown" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Pesticide Balance</p>
+                  <p className="text-xs text-muted-foreground">Use minimal amounts for sustainable farming</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
