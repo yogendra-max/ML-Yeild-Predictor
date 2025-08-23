@@ -62,6 +62,11 @@ function AppRoutes() {
           <Dashboard />
         </ProtectedRoute>
       } />
+      <Route path="/models" element={
+        <ProtectedRoute>
+          <ModelTraining />
+        </ProtectedRoute>
+      } />
       <Route path="/auth" element={
         <PublicRoute>
           <Auth />
