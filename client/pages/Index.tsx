@@ -143,10 +143,10 @@ export default function Index() {
       </header>
 
       <main className="container mx-auto px-4 py-4 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
-          
+        <div className="max-w-6xl mx-auto space-y-6">
+
           {/* Input Forms Section */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             
             {/* Farm Information */}
             <Card>
