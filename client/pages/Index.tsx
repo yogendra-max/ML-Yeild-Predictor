@@ -83,11 +83,50 @@ export default function Index() {
   const handlePredict = async () => {
     setIsLoading(true);
 
-    // Simulate AI prediction with realistic data
-    setTimeout(() => {
-      const mockPrediction: PredictionResult = {
+    try {
+      // Prepare input data for ML model
+      const inputData = {
+        temperature: weatherData.temperature,
+        rainfall: weatherData.rainfall,
+        humidity: weatherData.humidity,
+        season: weatherData.season as any,
+        cropType: cropType as any,
+        soilType: soilType as any,
+        pesticideType: pesticideData.type as any,
+        pesticideAmount: pesticideData.amount,
+        farmSize: 10, // Default farm size (could be made configurable)
+        irrigationType: 'rain-fed' as any, // Default irrigation (could be made configurable)
+        fertilizer: 100, // Default fertilizer amount (could be made configurable)
+      };
+
+      // Use ML model for prediction
+      const mlPrediction = await mlPredict(inputData);
+
+      const prediction: PredictionResult = {
+        predictedYield: mlPrediction.predictedYield,
+        confidence: mlPrediction.confidence,
+        factors: mlPrediction.factors,
+      };
+
+      // Save prediction to context
+      addPrediction(
+        cropType,
+        farmLocation,
+        soilType,
+        weatherData,
+        pesticideData,
+        prediction,
+      );
+
+      setPrediction(prediction);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Prediction error:", error);
+
+      // Fallback to simple prediction if ML model fails
+      const fallbackPrediction: PredictionResult = {
         predictedYield: Math.round((Math.random() * 50 + 30) * 100) / 100,
-        confidence: Math.round((Math.random() * 20 + 75) * 100) / 100,
+        confidence: 75,
         factors: [
           {
             name: "Temperature",
@@ -109,19 +148,18 @@ export default function Index() {
         ],
       };
 
-      // Save prediction to context
       addPrediction(
         cropType,
         farmLocation,
         soilType,
         weatherData,
         pesticideData,
-        mockPrediction,
+        fallbackPrediction,
       );
 
-      setPrediction(mockPrediction);
+      setPrediction(fallbackPrediction);
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const isFormValid = () => {
