@@ -53,6 +53,7 @@ export default function Index() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { addPrediction } = usePredictions();
+  const { predict: mlPredict, currentModel } = useMLModel();
 
   const [weatherData, setWeatherData] = useState<WeatherData>({
     temperature: 0,
