@@ -22,19 +22,20 @@ import {
   ScatterChart,
   Scatter
 } from "recharts";
-import { 
-  Sprout, 
-  User, 
-  LogOut, 
-  Plus, 
-  Download, 
-  Calendar, 
+import {
+  Sprout,
+  User,
+  LogOut,
+  Plus,
+  Download,
+  Calendar,
   TrendingUp,
   BarChart3,
   Target,
   Award,
   Activity,
-  ArrowLeft
+  ArrowLeft,
+  Brain
 } from "lucide-react";
 
 export default function Dashboard() {
