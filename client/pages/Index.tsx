@@ -28,6 +28,7 @@ import {
   WeatherData,
   PesticideData,
 } from "@/contexts/PredictionContext";
+import { useMLModel } from "@/contexts/MLModelContext";
 import {
   Droplets,
   Thermometer,
