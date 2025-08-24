@@ -50,11 +50,6 @@ export default function Dashboard() {
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<"7d" | "30d" | "90d" | "all">("30d");
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/auth");
-  };
-
   const handleNewPrediction = () => {
     navigate("/predict");
   };
