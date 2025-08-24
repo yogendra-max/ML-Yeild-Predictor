@@ -226,8 +226,8 @@ export default function Landing() {
               <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
                 Join thousands of farmers who are already using AI to increase their crop yields and reduce costs.
               </p>
-              <Button size="lg" variant="secondary" onClick={() => navigate('/auth')}>
-                Start Your Free Trial
+              <Button size="lg" variant="secondary" onClick={() => navigate('/predict')}>
+                Start Predicting Now
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             </CardContent>
