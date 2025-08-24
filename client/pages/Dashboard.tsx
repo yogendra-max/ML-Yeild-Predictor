@@ -39,14 +39,13 @@ import {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const { 
-    predictions, 
-    getAverageYield, 
-    getAverageConfidence, 
-    exportToCSV, 
+  const {
+    predictions,
+    getAverageYield,
+    getAverageConfidence,
+    exportToCSV,
     exportToPDF,
-    clearPredictions 
+    clearPredictions
   } = usePredictions();
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<"7d" | "30d" | "90d" | "all">("30d");
