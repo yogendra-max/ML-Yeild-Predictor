@@ -139,7 +139,7 @@ export default function Dashboard() {
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">Dashboard</h1>
                 <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
-                  Welcome back, {user?.name}
+                  Analytics and insights for your farm
                 </p>
               </div>
             </div>
