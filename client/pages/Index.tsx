@@ -181,7 +181,7 @@ export default function Index() {
                   Crop Yield Predictor
                 </h1>
                 <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
-                  Welcome {user?.name} - AI-powered crop yield forecasting
+                  AI-powered crop yield forecasting
                 </p>
               </div>
             </div>
