@@ -10,7 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { BackButton } from "@/components/BackButton";
-import { useAuth } from "@/contexts/AuthContext";
 import { useMLModel } from "@/contexts/MLModelContext";
 import { 
   Brain, 
