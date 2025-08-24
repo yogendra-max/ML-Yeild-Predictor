@@ -39,7 +39,6 @@ import {
   MapPin,
   User,
   Shield,
-  LogOut,
 } from "lucide-react";
 
 interface PredictionResult {
