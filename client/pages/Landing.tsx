@@ -96,12 +96,12 @@ export default function Landing() {
               Get accurate yield predictions based on weather patterns, soil conditions, and agricultural practices.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')}>
+              <Button size="lg" onClick={() => navigate('/predict')}>
                 Start Predicting Now
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
-              <Button variant="outline" size="lg">
-                Watch Demo
+              <Button variant="outline" size="lg" onClick={() => navigate('/dashboard')}>
+                View Dashboard
               </Button>
             </div>
           </div>
