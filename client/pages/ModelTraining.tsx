@@ -32,18 +32,17 @@ import {
 
 export default function ModelTraining() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const { 
-    models, 
-    currentModel, 
-    trainingDataset, 
-    isTraining, 
-    trainModel, 
-    loadSampleData, 
-    uploadDataset, 
-    setCurrentModel, 
-    exportDataset, 
-    clearModels 
+  const {
+    models,
+    currentModel,
+    trainingDataset,
+    isTraining,
+    trainModel,
+    loadSampleData,
+    uploadDataset,
+    setCurrentModel,
+    exportDataset,
+    clearModels
   } = useMLModel();
 
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<'gradient_boosting' | 'random_forest' | 'linear_regression' | 'neural_network'>('gradient_boosting');
