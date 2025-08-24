@@ -19,7 +19,8 @@ const queryClient = new QueryClient();
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/landing" element={<Landing />} />
       <Route path="/predict" element={<Index />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/models" element={<ModelTraining />} />
