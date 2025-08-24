@@ -158,13 +158,6 @@ export default function Dashboard() {
               <Button variant="outline" size="sm" onClick={() => navigate('/models')} className="sm:hidden">
                 <Brain className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="hidden sm:flex">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="sm:hidden">
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </div>
