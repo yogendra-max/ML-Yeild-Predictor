@@ -117,8 +117,8 @@ export function generateSampleDataset(size: number = 1000): TrainingDataPoint[] 
     baseYield *= (0.8 + Math.random() * 0.4);
     
     // Ensure reasonable yield range
-    const yield = Math.max(5, Math.min(80, Math.round(baseYield * 100) / 100));
-    
+    const cropYield = Math.max(5, Math.min(80, Math.round(baseYield * 100) / 100));
+
     dataset.push({
       temperature: Math.round(temperature * 100) / 100,
       rainfall: Math.round(rainfall * 100) / 100,
@@ -131,7 +131,7 @@ export function generateSampleDataset(size: number = 1000): TrainingDataPoint[] 
       farmSize: Math.round(farmSize * 100) / 100,
       irrigationType,
       fertilizer: Math.round(fertilizer * 100) / 100,
-      yield
+      yield: cropYield
     });
   }
   
