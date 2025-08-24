@@ -72,11 +72,6 @@ export default function Index() {
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/auth");
-  };
-
   const handlePredict = async () => {
     setIsLoading(true);
 
