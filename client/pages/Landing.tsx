@@ -67,11 +67,11 @@ export default function Landing() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={() => navigate('/auth')}>
-                <User className="h-4 w-4 mr-2" />
-                Sign In
+              <Button variant="outline" onClick={() => navigate('/dashboard')}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
               </Button>
-              <Button onClick={() => navigate('/auth')}>
+              <Button onClick={() => navigate('/predict')}>
                 Get Started
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
