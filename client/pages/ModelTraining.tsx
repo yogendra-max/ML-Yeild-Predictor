@@ -50,11 +50,6 @@ export default function ModelTraining() {
   const [trainingProgress, setTrainingProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/auth");
-  };
-
   const handleTrainModel = async () => {
     try {
       setUploadError("");
