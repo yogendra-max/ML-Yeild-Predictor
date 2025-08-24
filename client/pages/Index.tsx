@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PredictionInsights } from "@/components/PredictionInsights";
 import { BackButton } from "@/components/BackButton";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   usePredictions,
   WeatherData,
