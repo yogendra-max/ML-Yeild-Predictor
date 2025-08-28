@@ -685,30 +685,23 @@ export default function ModelTraining() {
     setPredictionError("");
 
     try {
-      console.log("Sending prediction form data to API:", predictionForm);
+      console.log("Sending prediction form data to proxy API:", predictionForm);
 
-      // Send data to external API
-      const response = await fetch("https://web-production-727e9.up.railway.app/predict", {
+      // Send data to our proxy endpoint
+      const response = await fetch("/api/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          ...predictionForm,
-          Crop_Year: parseInt(predictionForm.Crop_Year) || new Date().getFullYear(),
-          Area: parseFloat(predictionForm.Area) || 1,
-          Annual_Rainfall: parseFloat(predictionForm.Annual_Rainfall) || 150,
-          Fertilizer: parseFloat(predictionForm.Fertilizer) || 0,
-          Pesticide: parseFloat(predictionForm.Pesticide) || 0,
-        }),
+        body: JSON.stringify(predictionForm),
       });
 
       if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+        throw new Error(`Proxy API request failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("API response:", data);
+      console.log("Proxy API response:", data);
 
       // Format the API response into our expected structure
       const result = {
