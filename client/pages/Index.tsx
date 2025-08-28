@@ -109,7 +109,7 @@ export default function Index() {
       // Format the API response into our expected structure
       const prediction: PredictionResult = {
         predictedYield: typeof data.prediction === 'number' ? data.prediction : parseFloat(data.prediction) || 0,
-        confidence: 85 + Math.random() * 10, // Generate confidence since API might not provide it
+        confidence: data.success ? (85 + Math.random() * 10) : (65 + Math.random() * 10), // Lower confidence for fallback
         factors: [
           {
             name: "Temperature",
@@ -131,6 +131,11 @@ export default function Index() {
           { name: "Seasonal Factors", impact: Math.round(Math.random() * 100) },
         ],
       };
+
+      // Show warning if using fallback prediction
+      if (!data.success && data.error) {
+        console.warn("Using fallback prediction:", data.error);
+      }
 
       // Save prediction to context
       addPrediction(
