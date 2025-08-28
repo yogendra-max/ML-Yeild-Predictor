@@ -88,30 +88,23 @@ export default function Index() {
         Pesticide: pesticideData.amount,
       };
 
-      console.log("Sending data to API:", apiData);
+      console.log("Sending data to proxy API:", apiData);
 
-      // Send data to external API
-      const response = await fetch("https://web-production-727e9.up.railway.app/predict", {
+      // Send data to our proxy endpoint
+      const response = await fetch("/api/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          ...apiData,
-          Crop_Year: parseInt(apiData.Crop_Year.toString()),
-          Area: parseFloat(apiData.Area.toString()),
-          Annual_Rainfall: parseFloat(apiData.Annual_Rainfall.toString()),
-          Fertilizer: parseFloat(apiData.Fertilizer.toString()),
-          Pesticide: parseFloat(apiData.Pesticide.toString()),
-        }),
+        body: JSON.stringify(apiData),
       });
 
       if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+        throw new Error(`Proxy API request failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("API response:", data);
+      console.log("Proxy API response:", data);
 
       // Format the API response into our expected structure
       const prediction: PredictionResult = {
