@@ -468,9 +468,269 @@ export default function ModelTraining() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Yield Prediction Tab */}
+            <TabsContent value="predict" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calculator className="h-5 w-5" />
+                    Crop Yield Predictor
+                  </CardTitle>
+                  <CardDescription>
+                    Enter crop and environmental data to predict expected yield
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <form onSubmit={handlePredictionSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Crop Type */}
+                      <div className="space-y-2">
+                        <Label htmlFor="crop">Crop Type</Label>
+                        <Select value={predictionForm.Crop} onValueChange={(value) => setPredictionForm(prev => ({ ...prev, Crop: value }))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select crop type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Rice">Rice</SelectItem>
+                            <SelectItem value="Wheat">Wheat</SelectItem>
+                            <SelectItem value="Corn">Corn</SelectItem>
+                            <SelectItem value="Soybeans">Soybeans</SelectItem>
+                            <SelectItem value="Cotton">Cotton</SelectItem>
+                            <SelectItem value="Barley">Barley</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Season */}
+                      <div className="space-y-2">
+                        <Label htmlFor="season">Season</Label>
+                        <Select value={predictionForm.Season} onValueChange={(value) => setPredictionForm(prev => ({ ...prev, Season: value }))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select season" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Rabi">Rabi (Winter)</SelectItem>
+                            <SelectItem value="Kharif">Kharif (Monsoon)</SelectItem>
+                            <SelectItem value="Summer">Summer</SelectItem>
+                            <SelectItem value="Spring">Spring</SelectItem>
+                            <SelectItem value="Autumn">Autumn</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* State */}
+                      <div className="space-y-2">
+                        <Label htmlFor="state">State/Region</Label>
+                        <Input
+                          id="state"
+                          type="text"
+                          placeholder="e.g. Punjab, Maharashtra"
+                          value={predictionForm.State}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, State: e.target.value }))}
+                        />
+                      </div>
+
+                      {/* Crop Year */}
+                      <div className="space-y-2">
+                        <Label htmlFor="crop-year">Crop Year</Label>
+                        <Input
+                          id="crop-year"
+                          type="number"
+                          placeholder="e.g. 2024"
+                          value={predictionForm.Crop_Year}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, Crop_Year: e.target.value }))}
+                        />
+                      </div>
+
+                      {/* Area */}
+                      <div className="space-y-2">
+                        <Label htmlFor="area">Farm Area (hectares)</Label>
+                        <Input
+                          id="area"
+                          type="number"
+                          step="0.1"
+                          placeholder="e.g. 5.5"
+                          value={predictionForm.Area}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, Area: e.target.value }))}
+                        />
+                      </div>
+
+                      {/* Annual Rainfall */}
+                      <div className="space-y-2">
+                        <Label htmlFor="rainfall">Annual Rainfall (mm)</Label>
+                        <Input
+                          id="rainfall"
+                          type="number"
+                          step="0.1"
+                          placeholder="e.g. 250.5"
+                          value={predictionForm.Annual_Rainfall}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, Annual_Rainfall: e.target.value }))}
+                        />
+                      </div>
+
+                      {/* Fertilizer */}
+                      <div className="space-y-2">
+                        <Label htmlFor="fertilizer">Fertilizer Usage (kg/ha)</Label>
+                        <Input
+                          id="fertilizer"
+                          type="number"
+                          step="0.1"
+                          placeholder="e.g. 120.5"
+                          value={predictionForm.Fertilizer}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, Fertilizer: e.target.value }))}
+                        />
+                      </div>
+
+                      {/* Pesticide */}
+                      <div className="space-y-2">
+                        <Label htmlFor="pesticide">Pesticide Usage (kg/ha)</Label>
+                        <Input
+                          id="pesticide"
+                          type="number"
+                          step="0.1"
+                          placeholder="e.g. 2.5"
+                          value={predictionForm.Pesticide}
+                          onChange={(e) => setPredictionForm(prev => ({ ...prev, Pesticide: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Error Display */}
+                    {predictionError && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                        <p className="text-sm text-red-600">{predictionError}</p>
+                      </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      disabled={isPredicting || !predictionForm.Crop || !predictionForm.Season}
+                      className="w-full h-12"
+                    >
+                      {isPredicting ? (
+                        <>
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          Predicting Yield...
+                        </>
+                      ) : (
+                        <>
+                          <Calculator className="h-5 w-5 mr-2" />
+                          Predict Crop Yield
+                        </>
+                      )}
+                    </Button>
+                  </form>
+
+                  {/* Prediction Results */}
+                  {prediction && (
+                    <Card className="bg-gradient-to-r from-crop-green/5 to-wheat-gold/5 border-crop-green/20">
+                      <CardHeader>
+                        <CardTitle className="text-crop-green">Prediction Results</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="text-center p-4 bg-white rounded-lg border">
+                            <div className="text-3xl font-bold text-crop-green">
+                              {prediction.predictedYield} t/ha
+                            </div>
+                            <div className="text-sm text-muted-foreground">Predicted Yield</div>
+                          </div>
+                          <div className="text-center p-4 bg-white rounded-lg border">
+                            <div className="text-3xl font-bold text-water-blue">
+                              {Math.round(prediction.confidence)}%
+                            </div>
+                            <div className="text-sm text-muted-foreground">Confidence Level</div>
+                          </div>
+                        </div>
+
+                        {/* Factors Analysis */}
+                        <div className="space-y-3">
+                          <h4 className="font-medium">Contributing Factors</h4>
+                          <div className="space-y-2">
+                            {prediction.factors.map((factor, index) => (
+                              <div key={index} className="flex items-center justify-between">
+                                <span className="text-sm">{factor.name}</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className="bg-crop-green h-2 rounded-full"
+                                      style={{ width: `${Math.max(0, Math.min(100, factor.impact))}%` }}
+                                    ></div>
+                                  </div>
+                                  <span className="text-sm text-muted-foreground w-8">
+                                    {Math.round(factor.impact)}%
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
         </div>
       </main>
     </div>
   );
+
+  const handlePredictionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPredicting(true);
+    setPredictionError("");
+
+    try {
+      // Map form data to TrainingDataPoint structure
+      const inputData = {
+        temperature: 25, // Default temperature
+        rainfall: parseFloat(predictionForm.Annual_Rainfall) || 150,
+        humidity: 65, // Default humidity
+        season: mapSeasonToStandard(predictionForm.Season),
+        cropType: mapCropToStandard(predictionForm.Crop),
+        soilType: 'loam' as const, // Default soil type
+        pesticideType: predictionForm.Pesticide && parseFloat(predictionForm.Pesticide) > 0 ? 'synthetic' as const : 'none' as const,
+        pesticideAmount: parseFloat(predictionForm.Pesticide) || 0,
+        farmSize: parseFloat(predictionForm.Area) || 1,
+        irrigationType: 'rain-fed' as const, // Default irrigation
+        fertilizer: parseFloat(predictionForm.Fertilizer) || 0,
+      };
+
+      const result = await predict(inputData);
+      setPrediction(result);
+    } catch (error) {
+      console.error("Error fetching prediction:", error);
+      setPredictionError("Error: Could not generate prediction. Please try again.");
+    } finally {
+      setIsPredicting(false);
+    }
+  };
+
+  // Helper functions to map form values to TrainingDataPoint enums
+  const mapSeasonToStandard = (season: string) => {
+    const seasonMap: { [key: string]: 'spring' | 'summer' | 'autumn' | 'winter' } = {
+      'Rabi': 'winter',
+      'Kharif': 'summer',
+      'Summer': 'summer',
+      'Spring': 'spring',
+      'Autumn': 'autumn'
+    };
+    return seasonMap[season] || 'spring';
+  };
+
+  const mapCropToStandard = (crop: string) => {
+    const cropMap: { [key: string]: 'wheat' | 'corn' | 'rice' | 'soybeans' | 'cotton' | 'barley' } = {
+      'Rice': 'rice',
+      'Wheat': 'wheat',
+      'Corn': 'corn',
+      'Soybeans': 'soybeans',
+      'Cotton': 'cotton',
+      'Barley': 'barley'
+    };
+    return cropMap[crop] || 'wheat';
+  };
 }
