@@ -11,13 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { BackButton } from "@/components/BackButton";
 import { useMLModel } from "@/contexts/MLModelContext";
-import { 
-  Brain, 
-  Database, 
-  Upload, 
-  Download, 
-  Play, 
-  CheckCircle, 
+import {
+  Brain,
+  Database,
+  Upload,
+  Download,
+  Play,
+  CheckCircle,
   AlertCircle,
   BarChart3,
   Zap,
@@ -27,7 +27,8 @@ import {
   LogOut,
   Loader2,
   FileText,
-  Settings
+  Settings,
+  Calculator
 } from "lucide-react";
 
 export default function ModelTraining() {
@@ -42,13 +43,33 @@ export default function ModelTraining() {
     uploadDataset,
     setCurrentModel,
     exportDataset,
-    clearModels
+    clearModels,
+    predict
   } = useMLModel();
 
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<'gradient_boosting' | 'random_forest' | 'linear_regression' | 'neural_network'>('gradient_boosting');
   const [uploadError, setUploadError] = useState("");
   const [trainingProgress, setTrainingProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Yield prediction form state
+  const [predictionForm, setPredictionForm] = useState({
+    Crop: "",
+    Season: "",
+    State: "",
+    Crop_Year: "",
+    Area: "",
+    Annual_Rainfall: "",
+    Fertilizer: "",
+    Pesticide: "",
+  });
+  const [prediction, setPrediction] = useState<{
+    predictedYield: number;
+    confidence: number;
+    factors: Array<{ name: string; impact: number }>;
+  } | null>(null);
+  const [isPredicting, setIsPredicting] = useState(false);
+  const [predictionError, setPredictionError] = useState("");
 
   const handleTrainModel = async () => {
     try {
@@ -176,10 +197,11 @@ export default function ModelTraining() {
           </Card>
 
           <Tabs defaultValue="train" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="train">Train Model</TabsTrigger>
               <TabsTrigger value="dataset">Manage Dataset</TabsTrigger>
               <TabsTrigger value="models">Model History</TabsTrigger>
+              <TabsTrigger value="predict">Yield Predictor</TabsTrigger>
             </TabsList>
 
             {/* Train Model Tab */}
