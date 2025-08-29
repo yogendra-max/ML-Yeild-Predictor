@@ -11,7 +11,8 @@ import {
   Thermometer,
   Shield,
   Target,
-  ArrowRight
+  ArrowRight,
+  User
 } from "lucide-react";
 
 export default function Landing() {
