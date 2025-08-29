@@ -9,15 +9,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PredictionProvider } from "./contexts/PredictionContext";
 import { MLModelProvider } from "./contexts/MLModelContext";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/predict" element={<Index />} />
-      <Route path="*" element={<Index />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="*" element={<Landing />} />
     </Routes>
   );
 }
