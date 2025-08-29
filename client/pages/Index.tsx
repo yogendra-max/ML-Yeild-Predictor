@@ -232,26 +232,7 @@ export default function Index() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-              <BackButton to="/dashboard" />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/dashboard")}
-                className="hidden sm:flex"
-              >
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Dashboard
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/dashboard")}
-                className="sm:hidden"
-              >
-                <BarChart3 className="h-4 w-4" />
-              </Button>
-            </div>
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0"></div>
           </div>
         </div>
       </header>
