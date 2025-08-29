@@ -41,7 +41,11 @@ const App = () => (
   </QueryClientProvider>
 );
 
-declare global { interface Window { __appRoot?: ReturnType<typeof createRoot> } }
+declare global {
+  interface Window {
+    __appRoot?: ReturnType<typeof createRoot>;
+  }
+}
 
 const container = document.getElementById("root")!;
 if (!window.__appRoot) {
