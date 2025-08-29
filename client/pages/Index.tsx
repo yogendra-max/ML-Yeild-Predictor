@@ -79,7 +79,7 @@ export default function Index() {
       const apiData = {
         Crop: cropType.charAt(0).toUpperCase() + cropType.slice(1), // Capitalize first letter
         Season: mapSeasonToApiFormat(weatherData.season),
-        State: farmLocation.split(',')[0] || farmLocation, // Extract state/region from location
+        State: farmLocation.split(",")[0] || farmLocation, // Extract state/region from location
         Crop_Year: new Date().getFullYear(), // Current year
         Area: 10, // Default area in hectares (could be made configurable)
         Annual_Rainfall: weatherData.rainfall,
@@ -93,13 +93,15 @@ export default function Index() {
       const response = await fetch("/api/predict", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(apiData),
       });
 
       if (!response.ok) {
-        throw new Error(`Proxy API request failed with status ${response.status}`);
+        throw new Error(
+          `Proxy API request failed with status ${response.status}`,
+        );
       }
 
       const data = await response.json();
@@ -107,8 +109,13 @@ export default function Index() {
 
       // Format the API response into our expected structure
       const prediction: PredictionResult = {
-        predictedYield: typeof data.prediction === 'number' ? data.prediction : parseFloat(data.prediction) || 0,
-        confidence: data.success ? (85 + Math.random() * 10) : (65 + Math.random() * 10), // Lower confidence for fallback
+        predictedYield:
+          typeof data.prediction === "number"
+            ? data.prediction
+            : parseFloat(data.prediction) || 0,
+        confidence: data.success
+          ? 85 + Math.random() * 10
+          : 65 + Math.random() * 10, // Lower confidence for fallback
         factors: [
           {
             name: "Temperature",
@@ -193,12 +200,12 @@ export default function Index() {
   // Helper function to map season values to API format
   const mapSeasonToApiFormat = (season: string) => {
     const seasonMap: { [key: string]: string } = {
-      'spring': 'Rabi',
-      'summer': 'Kharif',
-      'fall': 'Rabi',
-      'winter': 'Rabi'
+      spring: "Rabi",
+      summer: "Kharif",
+      fall: "Rabi",
+      winter: "Rabi",
     };
-    return seasonMap[season] || 'Kharif';
+    return seasonMap[season] || "Kharif";
   };
 
   const isFormValid = () => {
