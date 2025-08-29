@@ -21,7 +21,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PredictionInsights } from "@/components/PredictionInsights";
-import { BackButton } from "@/components/BackButton";
 import {
   usePredictions,
   WeatherData,
